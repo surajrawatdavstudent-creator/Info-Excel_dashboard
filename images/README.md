@@ -1,18 +1,16 @@
-# Project Images
+# Project Evidence
 
-This folder is for real photos and screenshots from the project.
+This folder contains real project photos and screenshots. Files are grouped by the part they demonstrate.
 
-## Screenshots to add
+| File | Evidence |
+|---|---|
+| `hardware_setup.jpg` | Overall Arduino, breadboard, keypad and sensor setup |
+| `hardware_closeup.jpg` | Arduino board and wiring close-up |
+| `python_terminal.png` | Python's Serial output and record/dashboard update messages |
+| `python_code.png` | Python record-processing code in VS Code |
+| `data_records.png` | Saved access and sensor records in the spreadsheet data sheet |
+| `excel_dashboard.png` | Dashboard summary and charts |
 
-1. `hardware_setup.png` — full Arduino setup
-2. `hardware_closeup.png` — close view of the wiring and components
-3. `access_granted.png` — successful PIN attempt / green LED
-4. `access_denied.png` — wrong PIN / red LED
-5. `python_serial.png` — Python receiving Arduino data
-6. `csv_data.png` — CSV records
-7. `excel_dashboard.png` — final Excel dashboard
-8. `full_pipeline.png` — Arduino → Python → CSV → Excel working together
+Use genuine project images and screenshots. Do not use stock or AI-generated images as proof of the build.
 
-The current project does not use the LCD, so the main hardware photos should show the LCD-free setup.
-
-Only real project photos and screenshots should be used here. No stock or AI-generated project images.
+The video walkthrough is linked in the root README and in `docs/project_walkthrough.md`.
