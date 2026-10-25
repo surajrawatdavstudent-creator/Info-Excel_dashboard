@@ -10,16 +10,9 @@ An Arduino-based security and environment monitor connected to a Python data log
 
 The shared video is linked here as the project walkthrough. If the Drive file is not publicly viewable, viewers may need permission from the owner.
 
-## Project screenshots
+## Project evidence
 
-| Part | Preview |
-|---|---|
-| Hardware setup | ![Hardware setup](images/hardware_setup.jpg) |
-| Arduino close-up | ![Arduino wiring close-up](images/hardware_closeup.jpg) |
-| Python terminal | ![Python receiving readings](images/python_terminal.png) |
-| Python code | ![Python logger code](images/python_code.png) |
-| Recorded data | ![Project records in the data sheet](images/data_records.png) |
-| Excel dashboard | ![Excel dashboard charts](images/excel_dashboard.png) |
+The evidence belongs in the `images/` folder. The file names and their intended purpose are listed in [images/README.md](images/README.md). The actual image files must be committed before a gallery can render in GitHub.
 
 ## What it does
 
@@ -177,4 +170,4 @@ The keypad currently uses Arduino pins D0 and D1 for two columns. On the Uno, D0
 
 ## Project status
 
-**Prototype:** the Arduino-to-Python-to-CSV-to-Excel workflow has been tested, and the repository includes sample records and screenshots. Hardware photos and the walkthrough are provided as project evidence; the video is linked externally from Google Drive.
+**Prototype:** the Arduino-to-Python-to-CSV-to-Excel workflow has been tested, and sample records are included. The walkthrough is linked externally from Google Drive. The photos and screenshots still need to be committed as binary files in `images/` before GitHub can display them as a repository gallery.
