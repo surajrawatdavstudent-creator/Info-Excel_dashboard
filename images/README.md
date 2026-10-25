@@ -1,15 +1,18 @@
 # Project Images
 
-This folder will contain real images and screenshots from the project.
+This folder is for real photos and screenshots from the project.
 
-Planned images:
+## Screenshots to add
 
-- Arduino hardware setup
-- Keypad and LCD
-- DHT11 and HC-SR04 setup
-- Serial output in VS Code
-- CSV data
-- Excel dashboard
-- Final working project
+1. `hardware_setup.png` — full Arduino setup
+2. `hardware_closeup.png` — close view of the wiring and components
+3. `access_granted.png` — successful PIN attempt / green LED
+4. `access_denied.png` — wrong PIN / red LED
+5. `python_serial.png` — Python receiving Arduino data
+6. `csv_data.png` — CSV records
+7. `excel_dashboard.png` — final Excel dashboard
+8. `full_pipeline.png` — Arduino → Python → CSV → Excel working together
 
-The images will be added later from the actual project instead of using stock or unrelated images.
+The current project does not use the LCD, so the main hardware photos should show the LCD-free setup.
+
+Only real project photos and screenshots should be used here. No stock or AI-generated project images.
