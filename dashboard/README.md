@@ -1,19 +1,23 @@
 # Excel Dashboard
 
-This folder is for the Excel dashboard created from `data/arduino_data.csv`.
+The workbook is generated from `data/arduino_data.csv` by `python/update_dashboard.py`.
 
-The main workbook is:
+Expected workbook path:
 
 ```text
-Smart_Security_Auto_Dashboard.xlsx
+dashboard/Smart_Security_Auto_Dashboard.xlsx
 ```
 
-The workbook contains:
+The updater builds these sheets:
 
-- `Data` sheet for project records
-- `Dashboard` sheet for summary values and charts
-- `ChartsData` helper sheet for chart data
+- `Data` — saved records
+- `Dashboard` — totals, latest sensor readings and charts
+- `ChartsData` — hidden chart-source data
 
-The Python file `python/update_dashboard.py` creates or updates the workbook from the CSV file.
+The logger calls the updater after saving a new record. Running the updater manually from the repository root is also supported:
 
-The actual `.xlsx` workbook will be uploaded here separately because the current GitHub text-file connection cannot upload binary Excel files.
+```bash
+python python/update_dashboard.py
+```
+
+The workbook is an output file and can be regenerated from the CSV. Keep the CSV sample data in the repository so anyone can reproduce the dashboard without hardware.
