@@ -12,7 +12,17 @@ The shared video is linked here as the project walkthrough. If the Drive file is
 
 ## Project evidence
 
-The evidence belongs in the `images/` folder. The file names and their intended purpose are listed in [images/README.md](images/README.md). The actual image files must be committed before a gallery can render in GitHub.
+### Hardware setup
+
+![Full Arduino and breadboard setup](images/hardware_setup.jpg)
+
+![Arduino wiring close-up](images/hardware_closeup.jpg)
+
+### Software output
+
+![Python terminal receiving readings and updating the dashboard](images/python_terminal.jpg)
+
+More screenshots of the Python code, spreadsheet records, and Excel dashboard are planned for this section. See [images/README.md](images/README.md) for the evidence list.
 
 ## What it does
 
