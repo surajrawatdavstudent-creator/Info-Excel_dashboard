@@ -201,15 +201,11 @@ def build_dashboard():
     style_header(chart_data)
 
     for record_number, row in enumerate(rows, start=1):
-        chart_data.append([
-            None,
-            None,
-            None,
-            record_number,
-            number(row.get("Temperature_C")),
-            number(row.get("Humidity_percent")),
-            number(row.get("Distance_cm")),
-        ])
+        chart_row = record_number + 1
+        chart_data.cell(chart_row, 4).value = record_number
+        chart_data.cell(chart_row, 5).value = number(row.get("Temperature_C"))
+        chart_data.cell(chart_row, 6).value = number(row.get("Humidity_percent"))
+        chart_data.cell(chart_row, 7).value = number(row.get("Distance_cm"))
 
     # ---------------- Charts ----------------
     if granted + denied > 0:
