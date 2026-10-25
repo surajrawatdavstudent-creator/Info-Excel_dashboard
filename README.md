@@ -2,110 +2,76 @@
 
 ## Overview
 
-This project is an extension of my Arduino Smart Security System. The original project works mainly as an Arduino-based security and environmental monitoring system. In this version, I added a Python data pipeline and an Excel dashboard so that the readings and access results can be saved and viewed as data.
+This project is an extended version of my Arduino Smart Security System. The main difference is that this version connects the Arduino project to a Python data pipeline and an Excel dashboard.
 
-The main idea is:
+The main workflow is:
 
-**Arduino → Serial Communication → Python → CSV File → Excel Dashboard**
+**Arduino → Serial Communication → Python → CSV → Excel Dashboard**
 
-The Arduino still handles the hardware side of the project. Python receives the serial messages, processes them and saves complete records into a CSV file. The Excel dashboard then uses that data to show access results and sensor information.
+The original Arduino-only project is kept in a separate repository. This repository focuses on collecting, processing and displaying the project data.
 
-This is a separate project from my original Arduino-only repository. The original repository is kept separate because this repository focuses on the data logging and dashboard part.
+## What the project does
 
-## What the Project Does
+### Arduino
 
-The system has two main parts.
+The Arduino handles:
 
-### 1. Arduino security and monitoring
-
-The Arduino system uses:
-
-- 4x4 keypad for PIN entry
-- 16x2 parallel LCD
-- DHT11 for temperature and humidity
-- HC-SR04 for distance
-- Green LED for successful access
+- 4x4 keypad PIN entry
+- Access checking
+- DHT11 temperature and humidity readings
+- HC-SR04 distance readings
+- Green LED for granted access
 - Red LED for denied access
-- 5V buzzer for access feedback
+- 5V buzzer for feedback
+- Serial communication with Python
 
-The user enters a PIN. The Arduino checks the PIN and then gives the correct LED and buzzer response. After successful access, the sensor values are shown on the LCD.
+The current version is **LCD-free**. The LCD was removed because Python and the Excel dashboard are the main display and data-analysis part of this project.
 
-### 2. Python and Excel data system
+Current security settings:
 
-The Python part listens to the Arduino through the serial port. It reads messages such as:
+- PIN: `111`
+- Enter key: `4`
+- `*`: clear the PIN / lock the system
 
-- `SYSTEM_STARTED`
-- `ACCESS_GRANTED`
-- `ACCESS_DENIED`
-- `TEMPERATURE:<value>`
-- `HUMIDITY:<value>`
-- `DISTANCE:<value>`
+### Python
 
-Python combines the related readings into one record and saves them in `arduino_data.csv`.
+Python receives the Arduino serial messages and combines the sensor readings into complete records.
 
-The dashboard updater then reads the CSV file and creates/updates an Excel workbook with:
+The main Python files are:
 
-- Total records
+- `python/arduino_python.py` — reads Arduino data and saves records to CSV
+- `python/update_dashboard.py` — reads the CSV and updates the Excel dashboard
+
+### CSV
+
+The collected data is stored in:
+
+`data/arduino_data.csv`
+
+Columns:
+
+```text
+Date,Time,Access,Temperature_C,Humidity_percent,Distance_cm
+```
+
+### Excel dashboard
+
+The dashboard contains:
+
+- Total access attempts
 - Granted access count
 - Denied access count
 - Latest temperature
 - Latest humidity
 - Latest distance
 - Access result chart
-- Sensor reading chart
+- Temperature chart
+- Humidity chart
+- Distance chart
 
-## Project Workflow
+The current tested dashboard data is included in the repository CSV.
 
-```text
-+----------------------+
-|      Arduino Uno     |
-|                      |
-| Keypad + LCD         |
-| DHT11 + HC-SR04      |
-| LEDs + Buzzer         |
-+----------+-----------+
-           |
-           | Serial data
-           v
-+----------------------+
-|   arduino_python.py  |
-|                      |
-| Reads and processes  |
-| Arduino messages     |
-+----------+-----------+
-           |
-           | CSV record
-           v
-+----------------------+
-|  arduino_data.csv    |
-+----------+-----------+
-           |
-           | Python updater
-           v
-+------------------------------+
-| Smart_Security_Auto_Dashboard|
-|          .xlsx                |
-|                              |
-| Data + Dashboard + Charts    |
-+------------------------------+
-```
-
-## Hardware
-
-| Component | Purpose |
-|---|---|
-| Arduino Uno | Main controller |
-| 4x4 Keypad | PIN input |
-| 16x2 LCD | User interface and sensor display |
-| DHT11 | Temperature and humidity |
-| HC-SR04 | Distance measurement |
-| Green LED | Access granted indication |
-| Red LED | Access denied indication |
-| 5V Buzzer | Sound feedback |
-
-## Current Pin Setup
-
-The hardware setup used for the extended project is documented here so that the Python/data part can be understood together with the Arduino system.
+## Current pin setup
 
 | Component | Arduino pin |
 |---|---|
@@ -115,12 +81,6 @@ The hardware setup used for the extended project is documented here so that the 
 | Buzzer | D5 |
 | HC-SR04 Echo | D6 |
 | HC-SR04 Trig | D7 |
-| LCD RS | D8 |
-| LCD E | D9 |
-| LCD D4 | D10 |
-| LCD D5 | D11 |
-| LCD D6 | D12 |
-| LCD D7 | D13 |
 | Keypad Row 1 | A0 |
 | Keypad Row 2 | A1 |
 | Keypad Row 3 | A2 |
@@ -130,137 +90,132 @@ The hardware setup used for the extended project is documented here so that the 
 | Keypad Column 3 | D0 |
 | Keypad Column 4 | D1 |
 
-> Note: D0 and D1 are the Arduino hardware serial pins. Because the exact working Arduino serial/keypad code is not stored in this new repository yet, the final `.ino` file should be added from the tested local version rather than using a different pin arrangement. I am keeping this repository from silently changing the working hardware setup.
+The full pin information is in [`docs/pinout.md`](docs/pinout.md).
 
-## Python Part
+### LCD later
 
-### `arduino_python.py`
+The LCD is currently disconnected. D8-D13 are available for a future LCD version:
 
-This program connects Python to the Arduino using `pyserial`.
+| LCD | Arduino |
+|---|---|
+| RS | D8 |
+| E | D9 |
+| D4 | D10 |
+| D5 | D11 |
+| D6 | D12 |
+| D7 | D13 |
 
-The current local setup uses:
+This is a future hardware version and is not part of the current Arduino code.
 
-- Port: `COM4`
-- Baud rate: `9600`
+## Important Serial note
 
-The program creates the CSV file if it does not already exist. It waits for Arduino messages and builds complete sensor records.
+Arduino Uno uses D0 and D1 for hardware Serial. The current keypad also uses D0 and D1 for two keypad columns. This can cause interference between the keypad and USB Serial connection.
 
-For a denied access event, it saves the access result directly because there are no sensor values needed for that event.
+The current code keeps the tested project pin arrangement. If this becomes unstable during further hardware testing, the better next revision is to move the two keypad columns away from D0/D1.
 
-For a granted event, it waits until temperature, humidity and distance have all been received. Then it saves one complete record.
+## Python setup
 
-After saving a record, the program runs `update_dashboard.py` so that the Excel dashboard can be updated automatically.
+Python version used during development: **Python 3.14.2**
 
-## CSV Data
-
-The CSV file uses these columns:
-
-```text
-Date,Time,Access,Temperature_C,Humidity_percent,Distance_cm
-```
-
-Example structure:
+Required libraries are listed in `requirements.txt`:
 
 ```text
-2026-10-24,23:52:09,GRANTED,24.3,55.3,11.7
+pyserial
+openpyxl
 ```
 
-The CSV file is useful because it keeps the raw project data in a simple format that can be opened by Excel, Python or other data tools.
-
-## Excel Dashboard
-
-The Excel workbook is designed to make the collected data easier to understand.
-
-The updater creates three sheets:
-
-- `Data` — the collected records
-- `Dashboard` — summary values and charts
-- `ChartsData` — helper data used by the charts
-
-The dashboard is updated from the CSV file instead of requiring every value to be entered manually.
-
-The workbook currently includes an access result chart and a sensor readings chart. The dashboard can be improved later with more charts or filters if needed.
-
-## Automatic Update Flow
-
-The important part of this project is that the dashboard does not depend on manually copying every Arduino reading into Excel.
-
-When a complete Arduino event is received:
-
-1. Python reads the serial messages.
-2. Python stores the temperature, humidity and distance values.
-3. Python writes one row into the CSV file.
-4. Python starts `update_dashboard.py`.
-5. The updater reads the latest CSV data.
-6. The Excel workbook is recreated/updated.
-7. The dashboard contains the latest project data.
-
-## Software Used
-
-- Arduino IDE
-- Arduino C/C++
-- Python 3.14.2
-- VS Code
-- `pyserial`
-- `openpyxl`
-- Microsoft Excel
-- Git and GitHub
-
-## Python Installation
-
-Install the required Python libraries with:
+Install them with:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Then make sure the Arduino is connected to the correct COM port.
-
-For this setup the port is:
+The current local Arduino connection uses:
 
 ```text
 COM4
+9600 baud
 ```
 
-The Arduino Serial Monitor should be closed while `arduino_python.py` is using the same serial connection.
+Close the Arduino Serial Monitor before running the Python logger because both programs cannot use the same Serial connection at the same time.
 
-## Running the Project
+## Running the project
 
-### Step 1 — Start the Arduino
+### 1. Upload the Arduino code
 
-Upload the tested Arduino program and connect the Arduino Uno to the computer.
+Open:
 
-### Step 2 — Check the COM port
+```text
+arduino/Smart_Security_System.ino
+```
 
-Make sure the Python file is using the correct port. The current setup uses `COM4`.
+Upload it to the Arduino Uno.
 
-### Step 3 — Start Python
+### 2. Connect the Arduino
 
-From the `python` folder, run:
+Check that the Arduino is connected to the correct COM port.
+
+### 3. Run the Python logger
+
+From the project folder:
 
 ```bash
-python arduino_python.py
+python python/arduino_python.py
 ```
 
-Python should connect to the Arduino and wait for serial messages.
+The Python program waits for Arduino messages.
 
-### Step 4 — Use the security system
+### 4. Use the keypad
 
-Enter the PIN on the keypad. The Arduino will handle the access result and sensor readings.
+Enter:
 
-### Step 5 — Check the data
+```text
+111
+```
 
-The new record will be added to:
+Then press:
+
+```text
+4
+```
+
+For a correct PIN, the Arduino sends `ACCESS_GRANTED` and starts sending sensor readings.
+
+For a wrong PIN, it sends `ACCESS_DENIED`.
+
+### 5. Check the CSV
+
+Python saves the data to:
 
 ```text
 data/arduino_data.csv
 ```
 
-### Step 6 — Check the dashboard
+### 6. Check the Excel dashboard
 
-The Excel dashboard will be updated by the Python script.
+After a complete record is saved, Python automatically runs `update_dashboard.py` and updates the dashboard workbook.
 
-## Project Structure
+## Arduino serial messages
+
+The Arduino sends messages such as:
+
+```text
+SYSTEM_STARTED
+ACCESS_GRANTED
+TEMPERATURE:27.3
+HUMIDITY:48.3
+DISTANCE:7.8
+```
+
+For a distance reading that fails:
+
+```text
+DISTANCE:ERROR
+```
+
+Python waits for a complete granted record containing temperature, humidity and distance before saving it as one CSV row.
+
+## Project structure
 
 ```text
 Info-Excel_dashboard/
@@ -271,6 +226,7 @@ Info-Excel_dashboard/
 ├── .gitignore
 │
 ├── arduino/
+│   ├── Smart_Security_System.ino
 │   └── README.md
 │
 ├── python/
@@ -290,60 +246,56 @@ Info-Excel_dashboard/
     └── README.md
 ```
 
-The Excel workbook is a binary `.xlsx` file, so it cannot be created through the text-only GitHub file interface used here. I will add it to the repository when the actual workbook file is available for upload. The same applies to project photos and videos.
+## What I learned
 
-## Testing and Debugging
+This project helped me work with both hardware and software instead of only writing Arduino code.
 
-During development, the main difficulty was getting all parts of the Arduino project to work together at the same time. The LCD, keypad, DHT11, ultrasonic sensor, LEDs and buzzer could work individually but combining them required repeated wiring and code testing.
+I worked with:
 
-The Python side also needed testing because serial messages arrive separately. A granted access event is not one single message. The access message, temperature, humidity and distance messages have to be connected into one complete record before writing the row to the CSV file.
+- Arduino sensor readings
+- Keypad input and access logic
+- Serial communication
+- Python file handling
+- Serial data parsing
+- CSV data storage
+- `pyserial`
+- `openpyxl`
+- Excel charts
+- Automatic dashboard updates
+- Debugging hardware and software together
 
-Another issue was making sure that the Python scripts used the correct absolute/project paths. After fixing the paths and the duplicate workbook issue, the Arduino-to-CSV-to-Excel pipeline was successfully tested.
+## Future improvements
 
-## What I Learned
+Possible future improvements include:
 
-This project helped me understand more than just Arduino sensor code. I worked with a complete small data pipeline.
-
-I learned how to:
-
-- Read sensor data from Arduino
-- Send structured information through serial communication
-- Read serial data in Python
-- Parse different message types
-- Store data in CSV format
-- Work with files and project paths in Python
-- Use `openpyxl` to create and update Excel workbooks
-- Create charts from collected data
-- Connect hardware data with software and data analysis
-- Debug a project where hardware and software depend on each other
-- Organize a project into separate hardware, Python, data and dashboard sections
-
-## Future Improvements
-
-Some possible future improvements are:
-
-- Add more detailed access logs
-- Add date and time filters to the dashboard
+- Move keypad Serial-conflicting pins away from D0/D1
+- Add the LCD again as an optional local display
+- Add more dashboard filters
 - Add more sensor charts
-- Add a better event history view
-- Add a cleaner dashboard layout
-- Add automatic alerts for unusual distance or environmental readings
-- Move from CSV storage to a database for a larger project
+- Add a better event history section
+- Add alerts for unusual readings
+- Store larger datasets in a database
 - Build a web dashboard in a future version
-- Add more security features to the Arduino system
 
-These are future ideas. They are not part of the current project unless they are added later.
+These are future ideas and are not claimed as completed features.
 
-## Images
+## Images and dashboard file
 
-Project photos and screenshots will be added later in the `images` folder. I want the repository to show the real hardware, the serial output and the Excel dashboard instead of using unrelated stock images.
+The project photos and screenshots will be added to `images/` from the actual project. The planned screenshots are:
+
+- Full Arduino setup
+- Arduino close-up
+- Access granted
+- Access denied
+- Python serial output
+- CSV data
+- Excel dashboard
+- Full Arduino → Python → CSV → Excel pipeline
+
+The actual `.xlsx` dashboard is also part of the local working project. The current GitHub connector can write UTF-8 text files, but it cannot upload binary `.xlsx` files or image files. Therefore the workbook and screenshots still need to be uploaded through the normal GitHub web interface.
 
 ## Status
 
-**Current status: Working prototype with Arduino → Python → CSV → Excel data flow tested.**
+**Working prototype:** Arduino → Python → CSV → Excel dashboard has been tested with real project data.
 
-The hardware project and the data/dashboard project are intentionally kept as separate GitHub repositories.
-
-## License
-
-This project is released under the MIT License. See [LICENSE](LICENSE) for details.
+The hardware repository and this data/dashboard repository are intentionally kept separate.
