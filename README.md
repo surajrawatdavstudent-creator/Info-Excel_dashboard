@@ -22,8 +22,7 @@ The shared video is linked here as the project walkthrough. If the Drive file is
 
 ![Python terminal receiving readings and updating the dashboard](images/python_terminal.jpg)
 
-More screenshots of the Python code, spreadsheet records, and Excel dashboard are planned for this section. See [images/README.md](images/README.md) for the evidence list.
-
+The code screenshot, CSV-data screenshot, and Excel dashboard screenshot are listed in [images/README.md](images/README.md) and can be added as the next evidence files.
 ## What it does
 
 - Takes a PIN through a 4×4 keypad.
